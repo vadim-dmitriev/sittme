@@ -10,7 +10,11 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type service struct{}
+
 func main() {
+	srv := new(service)
+
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, os.Interrupt)
 	signal.Notify(quitCh, syscall.SIGTERM)
@@ -18,7 +22,7 @@ func main() {
 	server := fasthttp.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 30 * time.Second,
-		Handler:      newRouter().Handler,
+		Handler:      newRouter(srv).Handler,
 	}
 
 	log.Printf("Service started")

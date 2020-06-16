@@ -5,29 +5,29 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func newRouter() *fasthttprouter.Router {
+func newRouter(srv *service) *fasthttprouter.Router {
 	router := fasthttprouter.New()
 
-	router.GET("/api/v1/streams", showStreams)
-	router.POST("/api/v1/streams", createStream)
-	router.DELETE("/api/v1/streams/:uid", deleteStream)
-	router.PATCH("/api/v1/streams/:uid", changeStreamState)
+	router.GET("/api/v1/streams", srv.showStreams)
+	router.POST("/api/v1/streams", srv.createStream)
+	router.DELETE("/api/v1/streams/:uid", srv.deleteStream)
+	router.PATCH("/api/v1/streams/:uid", srv.changeStreamState)
 
 	return router
 }
 
-func createStream(ctx *fasthttp.RequestCtx) {
+func (srv *service) createStream(ctx *fasthttp.RequestCtx) {
 
 }
 
-func deleteStream(ctx *fasthttp.RequestCtx) {
+func (srv *service) deleteStream(ctx *fasthttp.RequestCtx) {
 
 }
 
-func showStreams(ctx *fasthttp.RequestCtx) {
+func (srv *service) showStreams(ctx *fasthttp.RequestCtx) {
 
 }
 
-func changeStreamState(ctx *fasthttp.RequestCtx) {
+func (srv *service) changeStreamState(ctx *fasthttp.RequestCtx) {
 
 }
