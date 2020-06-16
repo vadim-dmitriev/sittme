@@ -10,10 +10,10 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type service struct{}
-
 func main() {
-	srv := new(service)
+	srv := &service{
+		streams: make([]stream, 0),
+	}
 
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, os.Interrupt)
