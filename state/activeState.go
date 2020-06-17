@@ -1,5 +1,9 @@
 package state
 
+const (
+	activeStateString = "active"
+)
+
 type StateActive struct {
 	stateString string
 }

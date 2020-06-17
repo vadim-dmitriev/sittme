@@ -61,3 +61,14 @@ func (srv *Service) deleteStream(streamUUID uuid.UUID) error {
 	// элемент не был найден и, соответственно, удален
 	return fmt.Errorf("stream %s not found", streamUUID.String())
 }
+
+func (srv *Service) setNewState(uuid uuid.UUID, newState string) error {
+	srv.Lock()
+	defer srv.Unlock()
+
+	// проверка на существование трансляции с заданым uuid
+
+	// изменение состояния этой трансляции
+
+	return nil
+}

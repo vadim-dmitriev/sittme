@@ -1,5 +1,9 @@
 package state
 
+const (
+	createdStateString = "created"
+)
+
 type StateCreated struct {
 	stateString string
 }

@@ -10,8 +10,8 @@ func (srv *Service) createHandler() {
 
 	router.GET("/api/v1/streams", srv.showStreamsHandler())
 	router.POST("/api/v1/streams", srv.createStreamHandler())
-	router.DELETE("/api/v1/streams/:uid", srv.deleteStreamHandler())
-	router.PATCH("/api/v1/streams/:uid", srv.changeStreamStateHandler())
+	router.DELETE("/api/v1/streams/:uuid", srv.deleteStreamHandler())
+	router.PATCH("/api/v1/streams/:uuid", srv.changeStreamStateHandler())
 
 	srv.handler = router.Handler
 }

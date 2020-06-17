@@ -25,20 +25,20 @@ func (srv *Service) deleteStreamHandler() fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
 		ctx.SetContentType("application/json")
 
-		uidString := ctx.UserValue("uid").(string)
+		uuidString := ctx.UserValue("uuid").(string)
 
-		uid, err := uuid.Parse(uidString)
+		uuid, err := uuid.Parse(uuidString)
 		if err != nil {
 			ctx.SetStatusCode(fasthttp.StatusBadRequest)
 			return
 		}
 
-		if err := srv.deleteStream(uid); err != nil {
+		if err := srv.deleteStream(uuid); err != nil {
 			ctx.SetStatusCode(fasthttp.StatusNotFound)
 			return
 		}
 
-		ctx.SetStatusCode(fasthttp.StatusOK)
+		ctx.SetStatusCode(fasthttp.StatusNoContent)
 	}
 
 }
@@ -57,9 +57,30 @@ func (srv *Service) showStreamsHandler() fasthttp.RequestHandler {
 }
 
 func (srv *Service) changeStreamStateHandler() fasthttp.RequestHandler {
+	payload := struct {
+		NewState string `json:"state"`
+	}{}
 
 	return func(ctx *fasthttp.RequestCtx) {
+		ctx.SetContentType("application/json")
 
+		if err := json.Unmarshal(ctx.PostBody(), &payload); err != nil || payload.NewState == "" {
+			ctx.SetStatusCode(fasthttp.StatusBadRequest)
+			return
+		}
+
+		uuidString := ctx.UserValue("uuid").(string)
+		uuid, err := uuid.Parse(uuidString)
+		if err != nil {
+			ctx.SetStatusCode(fasthttp.StatusBadRequest)
+			return
+		}
+
+		if err := srv.setNewState(uuid, payload.NewState); err != nil {
+			// изменение состояние противоречит условиям
+			ctx.SetStatusCode(fasthttp.StatusUnprocessableEntity)
+			return
+		}
 	}
 
 }
