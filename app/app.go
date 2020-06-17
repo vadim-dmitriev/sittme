@@ -51,7 +51,7 @@ func (srv *Service) deleteStream(streamUUID uuid.UUID) error {
 	defer srv.Unlock()
 
 	for i, stream := range srv.Streams {
-		if stream.UID == streamUUID {
+		if stream.UUID == streamUUID {
 			srv.Streams[i] = srv.Streams[len(srv.Streams)-1]
 			srv.Streams = srv.Streams[:len(srv.Streams)-1]
 			return nil

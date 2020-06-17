@@ -1,55 +1,29 @@
 package stream
 
 import (
-	"bytes"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/vadim-dmitriev/sittme/state"
 )
-
-type state int
-
-const (
-	createdState = iota
-	activeState
-	interruptedState
-	finishedState
-)
-
-var (
-	iotaStringRepresentation = map[state]string{
-		createdState:     "created",
-		activeState:      "active",
-		interruptedState: "interrupted",
-		finishedState:    "finished",
-	}
-)
-
-func (s state) MarshalJSON() ([]byte, error) {
-	buffer := bytes.NewBufferString(`"`)
-	buffer.WriteString(iotaStringRepresentation[s])
-	buffer.WriteString(`"`)
-
-	return buffer.Bytes(), nil
-}
 
 type Stream struct {
-	UID        uuid.UUID `json:"id"`
+	UUID       uuid.UUID `json:"id"`
 	Attributes struct {
-		State        state     `json:"state"`
-		DateModified time.Time `json:"date_modified"`
+		State        state.Stater `json:"state"`
+		DateModified time.Time    `json:"date_modified"`
 	} `json:"attributes"`
 }
 
 // New cоздает новый объект трансляции, у которого
-// состояние Created
+// состояние 'created'
 func New() Stream {
 	stream := Stream{
-		UID: generateUUID(),
+		UUID: generateUUID(),
 	}
 
 	stream.Attributes.DateModified = time.Now()
-	stream.Attributes.State = createdState
+	stream.Attributes.State = state.NewCreated()
 
 	return stream
 }
