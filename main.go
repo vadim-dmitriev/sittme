@@ -7,13 +7,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/vadim-dmitriev/sittme/app"
 	"github.com/valyala/fasthttp"
 )
 
 func main() {
-	srv := &service{
-		streams: make([]stream, 0),
-	}
+	srv := app.New()
 
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, os.Interrupt)
@@ -22,7 +21,7 @@ func main() {
 	server := fasthttp.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 30 * time.Second,
-		Handler:      newRouter(srv).Handler,
+		Handler:      srv.Handler,
 	}
 
 	log.Printf("Service started")

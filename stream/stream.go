@@ -1,4 +1,4 @@
-package main
+package stream
 
 import (
 	"bytes"
@@ -33,7 +33,7 @@ func (s state) MarshalJSON() ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-type stream struct {
+type Stream struct {
 	UID        uuid.UUID `json:"id"`
 	Attributes struct {
 		State        state     `json:"state"`
@@ -41,10 +41,10 @@ type stream struct {
 	} `json:"attributes"`
 }
 
-// newStream cоздает новый объект трансляции, у которого
+// New cоздает новый объект трансляции, у которого
 // состояние Created
-func newStream() stream {
-	stream := stream{
+func New() Stream {
+	stream := Stream{
 		UID: generateUUID(),
 	}
 
@@ -52,4 +52,9 @@ func newStream() stream {
 	stream.Attributes.State = createdState
 
 	return stream
+}
+
+func generateUUID() uuid.UUID {
+	uuid, _ := uuid.NewRandom()
+	return uuid
 }
