@@ -11,3 +11,7 @@ func (srv *service) createNewStream() stream {
 
 	return newStream
 }
+
+func (srv *service) getStreams() []stream {
+	return srv.streams
+}

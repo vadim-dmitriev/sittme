@@ -32,7 +32,12 @@ func (srv *service) deleteStreamHandler(ctx *fasthttp.RequestCtx) {
 }
 
 func (srv *service) showStreamsHandler(ctx *fasthttp.RequestCtx) {
+	streams := srv.getStreams()
 
+	json.NewEncoder(ctx).Encode(streams)
+
+	ctx.SetStatusCode(200)
+	ctx.SetContentType("application/json")
 }
 
 func (srv *service) changeStreamStateHandler(ctx *fasthttp.RequestCtx) {
