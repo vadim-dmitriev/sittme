@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/buaazp/fasthttprouter"
+	"github.com/valyala/fasthttp"
 )
 
 func (srv *Service) createHandler() {
@@ -12,5 +13,9 @@ func (srv *Service) createHandler() {
 	router.DELETE("/api/v1/streams/:uid", srv.deleteStreamHandler())
 	router.PATCH("/api/v1/streams/:uid", srv.changeStreamStateHandler())
 
-	srv.Handler = router.Handler
+	srv.handler = router.Handler
+}
+
+func (srv *Service) Handler() fasthttp.RequestHandler {
+	return srv.handler
 }

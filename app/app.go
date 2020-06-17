@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/google/uuid"
 	"github.com/vadim-dmitriev/sittme/stream"
@@ -9,13 +10,17 @@ import (
 )
 
 type Service struct {
-	Handler fasthttp.RequestHandler
 	Streams []stream.Stream
+
+	sync.RWMutex
+	handler fasthttp.RequestHandler
 }
 
 func New() *Service {
 	srv := &Service{
-		Streams: make([]stream.Stream, 0),
+		make([]stream.Stream, 0),
+		sync.RWMutex{},
+		nil,
 	}
 
 	srv.createHandler()
@@ -24,6 +29,9 @@ func New() *Service {
 }
 
 func (srv *Service) createNewStream() stream.Stream {
+	srv.Lock()
+	defer srv.Unlock()
+
 	newStream := stream.New()
 
 	srv.Streams = append(srv.Streams, newStream)
@@ -32,10 +40,16 @@ func (srv *Service) createNewStream() stream.Stream {
 }
 
 func (srv *Service) getStreams() []stream.Stream {
+	srv.RLock()
+	defer srv.RUnlock()
+
 	return srv.Streams
 }
 
 func (srv *Service) deleteStream(streamUUID uuid.UUID) error {
+	srv.Lock()
+	defer srv.Unlock()
+
 	for i, stream := range srv.Streams {
 		if stream.UID == streamUUID {
 			srv.Streams[i] = srv.Streams[len(srv.Streams)-1]

@@ -21,7 +21,7 @@ func main() {
 	server := fasthttp.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 30 * time.Second,
-		Handler:      srv.Handler,
+		Handler:      srv.Handler(),
 	}
 
 	log.Printf("Service started")
