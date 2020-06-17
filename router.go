@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 
+	"github.com/google/uuid"
+
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
@@ -28,7 +30,22 @@ func (srv *service) createStreamHandler(ctx *fasthttp.RequestCtx) {
 }
 
 func (srv *service) deleteStreamHandler(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("application/json")
 
+	uidString := ctx.UserValue("uid").(string)
+
+	uid, err := uuid.Parse(uidString)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+		return
+	}
+
+	if err := srv.deleteStream(uid); err != nil {
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
+		return
+	}
+
+	ctx.SetStatusCode(fasthttp.StatusOK)
 }
 
 func (srv *service) showStreamsHandler(ctx *fasthttp.RequestCtx) {
@@ -36,7 +53,7 @@ func (srv *service) showStreamsHandler(ctx *fasthttp.RequestCtx) {
 
 	json.NewEncoder(ctx).Encode(streams)
 
-	ctx.SetStatusCode(200)
+	ctx.SetStatusCode(fasthttp.StatusOK)
 	ctx.SetContentType("application/json")
 }
 
