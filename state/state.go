@@ -21,6 +21,12 @@ func NewStater(stateString string) (Stater, error) {
 	case activeStateString:
 		return NewActive(), nil
 
+	case interruptedStateString:
+		return NewInterrupted(), nil
+
+	case finishedStateString:
+		return NewFinished(), nil
+
 	default:
 		return nil, fmt.Errorf("unsupported state '%s'", stateString)
 	}
