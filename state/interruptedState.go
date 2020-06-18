@@ -4,22 +4,22 @@ const (
 	interruptedStateString = "interrupted"
 )
 
-type StateInterrupted struct {
+type stateInterrupted struct {
 	state
 }
 
-func NewInterrupted() Stater {
-	return StateInterrupted{
+func newInterrupted() Stater {
+	return stateInterrupted{
 		state{
 			interruptedStateString,
 		},
 	}
 }
 
-func (s StateInterrupted) ChangeTo(newState Stater) (Stater, error) {
+func (s stateInterrupted) ChangeTo(newState Stater) (Stater, error) {
 	return nil, nil
 }
 
-func (s StateInterrupted) MarshalJSON() ([]byte, error) {
+func (s stateInterrupted) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }

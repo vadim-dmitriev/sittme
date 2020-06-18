@@ -4,23 +4,23 @@ const (
 	activeStateString = "active"
 )
 
-type StateActive struct {
+type stateActive struct {
 	state
 }
 
-func NewActive() Stater {
-	return StateActive{
+func newActive() Stater {
+	return stateActive{
 		state{
 			activeStateString,
 		},
 	}
 }
 
-func (s StateActive) ChangeTo(newState Stater) (Stater, error) {
+func (s stateActive) ChangeTo(newState Stater) (Stater, error) {
 
 	return nil, nil
 }
 
-func (s StateActive) MarshalJSON() ([]byte, error) {
+func (s stateActive) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
