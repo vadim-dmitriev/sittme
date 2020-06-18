@@ -16,8 +16,8 @@ func newInterrupted() Stater {
 	}
 }
 
-func (s stateInterrupted) ChangeTo(newState Stater) (Stater, error) {
-	return nil, nil
+func (s stateInterrupted) IsAllowChangeTo(newState Stater) bool {
+	return true
 }
 
 func (s stateInterrupted) MarshalJSON() ([]byte, error) {

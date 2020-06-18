@@ -16,8 +16,8 @@ func newFinished() Stater {
 	}
 }
 
-func (s stateFinished) ChangeTo(newState Stater) (Stater, error) {
-	return nil, nil
+func (s stateFinished) IsAllowChangeTo(newState Stater) bool {
+	return true
 }
 
 func (s stateFinished) MarshalJSON() ([]byte, error) {

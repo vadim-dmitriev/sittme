@@ -1,6 +1,6 @@
 package state
 
 type Stater interface {
-	ChangeTo(Stater) (Stater, error)
+	IsAllowChangeTo(Stater) bool
 	MarshalJSON() ([]byte, error)
 }

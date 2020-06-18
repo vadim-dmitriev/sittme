@@ -16,9 +16,9 @@ func newActive() Stater {
 	}
 }
 
-func (s stateActive) ChangeTo(newState Stater) (Stater, error) {
+func (s stateActive) IsAllowChangeTo(newState Stater) bool {
 
-	return nil, nil
+	return true
 }
 
 func (s stateActive) MarshalJSON() ([]byte, error) {
