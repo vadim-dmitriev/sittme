@@ -81,6 +81,8 @@ func (srv *Service) changeStreamStateHandler() fasthttp.RequestHandler {
 			ctx.SetStatusCode(fasthttp.StatusUnprocessableEntity)
 			return
 		}
+
+		ctx.SetStatusCode(fasthttp.StatusNoContent)
 	}
 
 }

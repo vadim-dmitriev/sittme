@@ -59,6 +59,11 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 	}
 
 	currentState := stream.GetState()
+
+	if newState == currentState {
+		return nil
+	}
+
 	if !currentState.IsAllowChangeTo(newState) {
 		return fmt.Errorf("can`t change state")
 	}

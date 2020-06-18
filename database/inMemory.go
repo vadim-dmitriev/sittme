@@ -38,12 +38,12 @@ func (im *InMemory) Select(uuid uuid.UUID) (stream.Stream, error) {
 	im.RLock()
 	defer im.RUnlock()
 
-	stream, ok := im.streamsMap[uuid]
+	selectedStream, ok := im.streamsMap[uuid]
 	if !ok {
-		return *stream, fmt.Errorf("stream %s not found", uuid.String())
+		return stream.New(), fmt.Errorf("stream %s not found", uuid.String())
 	}
 
-	return *stream, nil
+	return *selectedStream, nil
 }
 
 func (im *InMemory) SelectAll() []stream.Stream {
@@ -73,9 +73,12 @@ func (im *InMemory) Update(uuid uuid.UUID, newState state.Stater) error {
 	im.Lock()
 	defer im.Unlock()
 
-	stream, _ := im.streamsMap[uuid]
-
-	stream.SetState(newState)
+	for i, stream := range im.streams {
+		if stream.UUID == uuid {
+			im.streams[i].SetState(newState)
+			break
+		}
+	}
 
 	return nil
 }
