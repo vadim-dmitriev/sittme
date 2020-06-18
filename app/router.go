@@ -13,7 +13,7 @@ func (srv *Service) createHandler() {
 	router.DELETE("/api/v1/streams/:uuid", srv.deleteStreamHandler())
 	router.PATCH("/api/v1/streams/:uuid", srv.changeStreamStateHandler())
 
-	srv.handler = loggerMiddleware(router.Handler)
+	srv.handler = logMiddleware(router.Handler)
 }
 
 func (srv *Service) Handler() fasthttp.RequestHandler {
