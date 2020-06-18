@@ -19,11 +19,15 @@ func NewCreated() Stater {
 func (s StateCreated) IsAllowChangeTo(newState Stater) bool {
 
 	// Из состояния Created можно перейти только в состояние Active
-	if _, ok := newState.(stateActive); !ok {
+	switch newState.(type) {
+
+	case stateActive:
+		return true
+
+	default:
 		return false
 	}
 
-	return true
 }
 
 func (s StateCreated) MarshalJSON() ([]byte, error) {

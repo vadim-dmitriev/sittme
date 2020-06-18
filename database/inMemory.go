@@ -76,6 +76,7 @@ func (im *InMemory) Update(uuid uuid.UUID, newState state.Stater) error {
 	for i, stream := range im.streams {
 		if stream.UUID == uuid {
 			im.streams[i].SetState(newState)
+			im.streamsMap[stream.UUID].SetState(newState)
 			break
 		}
 	}

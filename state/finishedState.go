@@ -17,7 +17,8 @@ func newFinished() Stater {
 }
 
 func (s stateFinished) IsAllowChangeTo(newState Stater) bool {
-	return true
+	// Из состояние Finished никуда нельзя перейти
+	return false
 }
 
 func (s stateFinished) MarshalJSON() ([]byte, error) {

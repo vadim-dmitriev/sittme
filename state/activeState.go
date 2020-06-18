@@ -18,7 +18,15 @@ func newActive() Stater {
 
 func (s stateActive) IsAllowChangeTo(newState Stater) bool {
 
-	return true
+	// Из состояния Active можно перейти только в состояние Interrupted
+	switch newState.(type) {
+	case stateInterrupted:
+		return true
+
+	default:
+		return false
+	}
+
 }
 
 func (s stateActive) MarshalJSON() ([]byte, error) {
