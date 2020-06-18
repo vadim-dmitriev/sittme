@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/vadim-dmitriev/sittme/database"
 	"github.com/vadim-dmitriev/sittme/state"
@@ -41,6 +43,11 @@ func (srv *Service) deleteStream(uuid uuid.UUID) error {
 }
 
 func (srv *Service) setNewState(uuid uuid.UUID, newStateString string) error {
+	_, err := srv.db.Select(uuid)
+	if err != nil {
+		return fmt.Errorf("stream %s not found", uuid.String())
+	}
+
 	newState, err := state.NewState(newStateString)
 	if err != nil {
 		return err

@@ -28,6 +28,13 @@ func New() *Stream {
 	return &stream
 }
 
+func (s *Stream) SetNewState(newState *state.Stater) error {
+
+	// вызов stater.ChangeTo()
+
+	return nil
+}
+
 func generateUUID() uuid.UUID {
 	uuid, _ := uuid.NewRandom()
 	return uuid

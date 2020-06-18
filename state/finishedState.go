@@ -16,6 +16,10 @@ func NewFinished() Stater {
 	}
 }
 
+func (s StateFinished) ChangeTo(newState Stater) (Stater, error) {
+	return nil, nil
+}
+
 func (s StateFinished) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }

@@ -16,6 +16,10 @@ func NewInterrupted() Stater {
 	}
 }
 
+func (s StateInterrupted) ChangeTo(newState Stater) (Stater, error) {
+	return nil, nil
+}
+
 func (s StateInterrupted) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
