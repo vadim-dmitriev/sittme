@@ -35,6 +35,9 @@ func (im *InMemory) Insert(newStream stream.Stream) error {
 }
 
 func (im *InMemory) Select(uuid uuid.UUID) (stream.Stream, error) {
+	im.RLock()
+	defer im.RUnlock()
+
 	stream, ok := im.streamsMap[uuid]
 	if !ok {
 		return *stream, fmt.Errorf("stream %s not found", uuid.String())
@@ -54,11 +57,7 @@ func (im *InMemory) Delete(uuid uuid.UUID) error {
 	im.Lock()
 	defer im.Unlock()
 
-	if _, ok := im.streamsMap[uuid]; !ok {
-		// элемент не был найден
-		return fmt.Errorf("stream %s not found", uuid.String())
-	}
-
+	delete(im.streamsMap, uuid)
 	for i, stream := range im.streams {
 		if stream.UUID == uuid {
 			im.streams[i] = im.streams[len(im.streams)-1]
@@ -70,13 +69,13 @@ func (im *InMemory) Delete(uuid uuid.UUID) error {
 	return nil
 }
 
-func (im *InMemory) Update(uuid uuid.UUID, newStreamState state.Stater) error {
+func (im *InMemory) Update(uuid uuid.UUID, newState state.Stater) error {
 	im.Lock()
 	defer im.Unlock()
 
-	// проверка на существование трансляции с заданым uuid
+	stream, _ := im.streamsMap[uuid]
 
-	// изменение состояния этой трансляции
+	stream.SetState(newState)
 
 	return nil
 }

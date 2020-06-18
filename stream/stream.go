@@ -28,11 +28,12 @@ func New() Stream {
 	return stream
 }
 
-func (s *Stream) SetNewState(newState *state.Stater) error {
+func (s *Stream) GetState() state.Stater {
+	return s.Attributes.State
+}
 
-	// вызов stater.ChangeTo()
-
-	return nil
+func (s *Stream) SetState(newState state.Stater) {
+	s.Attributes.State = newState
 }
 
 func generateUUID() uuid.UUID {

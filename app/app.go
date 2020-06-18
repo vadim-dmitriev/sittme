@@ -39,18 +39,28 @@ func (srv *Service) getStreams() []stream.Stream {
 }
 
 func (srv *Service) deleteStream(uuid uuid.UUID) error {
-	return srv.db.Delete(uuid)
-}
-
-func (srv *Service) setNewState(uuid uuid.UUID, newStateString string) error {
 	_, err := srv.db.Select(uuid)
 	if err != nil {
 		return fmt.Errorf("stream %s not found", uuid.String())
 	}
 
-	newState, err := state.NewState(newStateString)
+	return srv.db.Delete(uuid)
+}
+
+func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
+	stream, err := srv.db.Select(uuid)
+	if err != nil {
+		return fmt.Errorf("stream %s not found", uuid.String())
+	}
+
+	newState, err := state.NewState(newString)
 	if err != nil {
 		return err
+	}
+
+	currentState := stream.GetState()
+	if !currentState.IsAllowChangeTo(newState) {
+		return fmt.Errorf("can`t change state")
 	}
 
 	return srv.db.Update(uuid, newState)
