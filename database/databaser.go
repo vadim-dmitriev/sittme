@@ -7,9 +7,9 @@ import (
 )
 
 type Databaser interface {
-	Insert(*stream.Stream) error
-	Select(uuid uuid.UUID) (*stream.Stream, error)
-	SelectAll() []*stream.Stream
+	Insert(stream.Stream) error
+	Select(uuid uuid.UUID) (stream.Stream, error)
+	SelectAll() []stream.Stream
 	Delete(uuid.UUID) error
 	Update(uuid.UUID, state.Stater) error
 }

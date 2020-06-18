@@ -17,7 +17,7 @@ type Stream struct {
 
 // New cоздает новый объект трансляции, у которого
 // состояние 'created'
-func New() *Stream {
+func New() Stream {
 	stream := Stream{
 		UUID: generateUUID(),
 	}
@@ -25,7 +25,7 @@ func New() *Stream {
 	stream.Attributes.DateModified = time.Now()
 	stream.Attributes.State = state.NewCreated()
 
-	return &stream
+	return stream
 }
 
 func (s *Stream) SetNewState(newState *state.Stater) error {

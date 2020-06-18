@@ -10,40 +10,40 @@ import (
 )
 
 type InMemory struct {
-	streams    []*stream.Stream
+	streams    []stream.Stream
 	streamsMap map[uuid.UUID]*stream.Stream
 	sync.RWMutex
 }
 
 func NewInMemory() Databaser {
 	inMemory := InMemory{
-		streams:    make([]*stream.Stream, 0),
+		streams:    make([]stream.Stream, 0),
 		streamsMap: make(map[uuid.UUID]*stream.Stream, 0),
 	}
 
 	return &inMemory
 }
 
-func (im *InMemory) Insert(newStream *stream.Stream) error {
+func (im *InMemory) Insert(newStream stream.Stream) error {
 	im.Lock()
 	defer im.Unlock()
 
 	im.streams = append(im.streams, newStream)
-	im.streamsMap[newStream.UUID] = newStream
+	im.streamsMap[newStream.UUID] = &newStream
 
 	return nil
 }
 
-func (im *InMemory) Select(uuid uuid.UUID) (*stream.Stream, error) {
+func (im *InMemory) Select(uuid uuid.UUID) (stream.Stream, error) {
 	stream, ok := im.streamsMap[uuid]
 	if !ok {
-		return nil, fmt.Errorf("stream %s not found", uuid.String())
+		return *stream, fmt.Errorf("stream %s not found", uuid.String())
 	}
 
-	return stream, nil
+	return *stream, nil
 }
 
-func (im *InMemory) SelectAll() []*stream.Stream {
+func (im *InMemory) SelectAll() []stream.Stream {
 	im.RLock()
 	defer im.RUnlock()
 
