@@ -1,26 +1,22 @@
 package app
 
 import (
-	"fmt"
-	"sync"
-
 	"github.com/google/uuid"
+	"github.com/vadim-dmitriev/sittme/database"
+	"github.com/vadim-dmitriev/sittme/state"
 	"github.com/vadim-dmitriev/sittme/stream"
 	"github.com/valyala/fasthttp"
 )
 
 type Service struct {
-	Streams []stream.Stream
-
-	sync.RWMutex
+	db      database.Databaser
 	handler fasthttp.RequestHandler
 }
 
 func New() *Service {
 	srv := &Service{
-		make([]stream.Stream, 0),
-		sync.RWMutex{},
-		nil,
+		db:      database.NewInMemory(),
+		handler: nil,
 	}
 
 	srv.createHandler()
@@ -29,46 +25,26 @@ func New() *Service {
 }
 
 func (srv *Service) createNewStream() stream.Stream {
-	srv.Lock()
-	defer srv.Unlock()
-
 	newStream := stream.New()
 
-	srv.Streams = append(srv.Streams, newStream)
+	srv.db.Insert(newStream)
 
 	return newStream
 }
 
 func (srv *Service) getStreams() []stream.Stream {
-	srv.RLock()
-	defer srv.RUnlock()
-
-	return srv.Streams
+	return srv.db.SelectAll()
 }
 
-func (srv *Service) deleteStream(streamUUID uuid.UUID) error {
-	srv.Lock()
-	defer srv.Unlock()
+func (srv *Service) deleteStream(uuid uuid.UUID) error {
+	return srv.db.Delete(uuid)
+}
 
-	for i, stream := range srv.Streams {
-		if stream.UUID == streamUUID {
-			srv.Streams[i] = srv.Streams[len(srv.Streams)-1]
-			srv.Streams = srv.Streams[:len(srv.Streams)-1]
-			return nil
-		}
+func (srv *Service) setNewState(uuid uuid.UUID, newStateString string) error {
+	newState, err := state.NewStater(newStateString)
+	if err != nil {
+		return err
 	}
 
-	// элемент не был найден и, соответственно, удален
-	return fmt.Errorf("stream %s not found", streamUUID.String())
-}
-
-func (srv *Service) setNewState(uuid uuid.UUID, newState string) error {
-	srv.Lock()
-	defer srv.Unlock()
-
-	// проверка на существование трансляции с заданым uuid
-
-	// изменение состояния этой трансляции
-
-	return nil
+	return srv.db.Update(uuid, newState)
 }
