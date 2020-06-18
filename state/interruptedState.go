@@ -5,12 +5,14 @@ const (
 )
 
 type StateInterrupted struct {
-	stateString string
+	state
 }
 
 func NewInterrupted() Stater {
 	return StateInterrupted{
-		stateString: interruptedStateString,
+		state{
+			interruptedStateString,
+		},
 	}
 }
 

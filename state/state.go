@@ -2,16 +2,11 @@ package state
 
 import "fmt"
 
-/*
-	TODO: Тут можно определить тип state, от которого будут наследоваться
-	конкретные типы состояний
+type state struct {
+	stateString string
+}
 
-	type state struct {
-		stateString string
-	}
-
-*/
-func NewStater(stateString string) (Stater, error) {
+func NewState(stateString string) (Stater, error) {
 
 	switch stateString {
 

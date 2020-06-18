@@ -5,12 +5,14 @@ const (
 )
 
 type StateActive struct {
-	stateString string
+	state
 }
 
 func NewActive() Stater {
 	return StateActive{
-		activeStateString,
+		state{
+			activeStateString,
+		},
 	}
 }
 

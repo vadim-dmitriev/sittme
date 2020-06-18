@@ -41,7 +41,7 @@ func (srv *Service) deleteStream(uuid uuid.UUID) error {
 }
 
 func (srv *Service) setNewState(uuid uuid.UUID, newStateString string) error {
-	newState, err := state.NewStater(newStateString)
+	newState, err := state.NewState(newStateString)
 	if err != nil {
 		return err
 	}

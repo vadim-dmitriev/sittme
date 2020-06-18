@@ -5,12 +5,14 @@ const (
 )
 
 type StateCreated struct {
-	stateString string
+	state
 }
 
 func NewCreated() Stater {
 	return StateCreated{
-		stateString: createdStateString,
+		state{
+			createdStateString,
+		},
 	}
 }
 

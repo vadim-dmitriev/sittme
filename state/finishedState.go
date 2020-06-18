@@ -5,12 +5,14 @@ const (
 )
 
 type StateFinished struct {
-	stateString string
+	state
 }
 
 func NewFinished() Stater {
 	return StateFinished{
-		stateString: finishedStateString,
+		state{
+			finishedStateString,
+		},
 	}
 }
 
