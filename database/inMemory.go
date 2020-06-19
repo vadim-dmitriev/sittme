@@ -10,15 +10,13 @@ import (
 )
 
 type InMemory struct {
-	streams    []stream.Stream
-	streamsMap map[uuid.UUID]*stream.Stream
+	streams []stream.Stream
 	sync.RWMutex
 }
 
 func NewInMemory() Databaser {
 	inMemory := InMemory{
-		streams:    make([]stream.Stream, 0),
-		streamsMap: make(map[uuid.UUID]*stream.Stream, 0),
+		streams: make([]stream.Stream, 0),
 	}
 
 	return &inMemory
@@ -29,7 +27,6 @@ func (im *InMemory) Insert(newStream stream.Stream) error {
 	defer im.Unlock()
 
 	im.streams = append(im.streams, newStream)
-	im.streamsMap[newStream.UUID] = &newStream
 
 	return nil
 }
@@ -38,12 +35,13 @@ func (im *InMemory) Select(uuid uuid.UUID) (stream.Stream, error) {
 	im.RLock()
 	defer im.RUnlock()
 
-	selectedStream, ok := im.streamsMap[uuid]
-	if !ok {
-		return stream.New(), fmt.Errorf("stream '%s' not found", uuid.String())
+	for _, stream := range im.streams {
+		if stream.UUID == uuid {
+			return stream, nil
+		}
 	}
+	return stream.New(), fmt.Errorf("stream '%s' not found", uuid.String())
 
-	return *selectedStream, nil
 }
 
 func (im *InMemory) SelectAll() []stream.Stream {
@@ -57,7 +55,6 @@ func (im *InMemory) Delete(uuid uuid.UUID) error {
 	im.Lock()
 	defer im.Unlock()
 
-	delete(im.streamsMap, uuid)
 	for i, stream := range im.streams {
 		if stream.UUID == uuid {
 			im.streams[i] = im.streams[len(im.streams)-1]
@@ -76,7 +73,6 @@ func (im *InMemory) Update(uuid uuid.UUID, newState state.Stater) error {
 	for i, stream := range im.streams {
 		if stream.UUID == uuid {
 			im.streams[i].SetState(newState)
-			im.streamsMap[stream.UUID].SetState(newState)
 			break
 		}
 	}
