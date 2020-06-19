@@ -40,7 +40,7 @@ func (im *InMemory) Select(uuid uuid.UUID) (stream.Stream, error) {
 
 	selectedStream, ok := im.streamsMap[uuid]
 	if !ok {
-		return stream.New(), fmt.Errorf("stream %s not found", uuid.String())
+		return stream.New(), fmt.Errorf("stream '%s' not found", uuid.String())
 	}
 
 	return *selectedStream, nil

@@ -1,8 +1,6 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/vadim-dmitriev/sittme/database"
 	"github.com/vadim-dmitriev/sittme/state"
@@ -41,7 +39,7 @@ func (srv *Service) getStreams() []stream.Stream {
 func (srv *Service) deleteStream(uuid uuid.UUID) error {
 	_, err := srv.db.Select(uuid)
 	if err != nil {
-		return fmt.Errorf("stream %s not found", uuid.String())
+		return streamNotFoundError{uuid}
 	}
 
 	return srv.db.Delete(uuid)
@@ -50,7 +48,7 @@ func (srv *Service) deleteStream(uuid uuid.UUID) error {
 func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 	stream, err := srv.db.Select(uuid)
 	if err != nil {
-		return fmt.Errorf("stream %s not found", uuid.String())
+		return streamNotFoundError{uuid}
 	}
 
 	newState, err := state.NewState(newString)
@@ -65,7 +63,11 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 	}
 
 	if !currentState.IsAllowChangeTo(newState) {
-		return fmt.Errorf("can`t change state")
+		return canNotChangeStateError{
+			uuid,
+			currentState,
+			newState,
+		}
 	}
 
 	return srv.db.Update(uuid, newState)

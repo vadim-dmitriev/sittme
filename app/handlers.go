@@ -7,6 +7,18 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type successResponse struct {
+	Data interface{} `json:"data"`
+}
+
+type failedResponse struct {
+	Error struct {
+		StatusCode  int    `json:"status"`
+		Title       string `json"title"`
+		Description string `json:"description"`
+	} `json:"error"`
+}
+
 func (srv *Service) createStreamHandler() fasthttp.RequestHandler {
 
 	return func(ctx *fasthttp.RequestCtx) {
@@ -77,8 +89,16 @@ func (srv *Service) changeStreamStateHandler() fasthttp.RequestHandler {
 		}
 
 		if err := srv.setNewState(uuid, payload.NewState); err != nil {
-			// изменение состояние противоречит условиям
-			ctx.SetStatusCode(fasthttp.StatusUnprocessableEntity)
+			switch err.(type) {
+			case streamNotFoundError:
+				ctx.SetStatusCode(fasthttp.StatusNotFound)
+
+			case canNotChangeStateError:
+				ctx.SetStatusCode(fasthttp.StatusUnprocessableEntity)
+
+			default:
+				ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+			}
 			return
 		}
 
