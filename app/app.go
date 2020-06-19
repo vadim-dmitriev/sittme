@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/vadim-dmitriev/sittme/database"
 	"github.com/vadim-dmitriev/sittme/state"
@@ -69,6 +71,24 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 			newState,
 		}
 	}
+
+	newStreamChan := make(chan state.Stater)
+
+	go func(ch chan state.Stater) {
+		timer := time.NewTimer(2 * time.Second)
+
+		select {
+		case newState := <-ch:
+			if currentState.IsAllowChangeTo(newState) {
+				srv.db.Update(uuid, state.NewActive())
+			}
+
+		case <-timer.C:
+			srv.db.Update(uuid, state.NewFinished())
+		}
+
+	}(newStreamChan)
+	newStreamChan <- newState
 
 	return srv.db.Update(uuid, newState)
 }

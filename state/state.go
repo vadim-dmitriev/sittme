@@ -14,13 +14,13 @@ func NewState(stateString string) (Stater, error) {
 		return NewCreated(), nil
 
 	case activeStateString:
-		return newActive(), nil
+		return NewActive(), nil
 
 	case interruptedStateString:
-		return newInterrupted(), nil
+		return NewInterrupted(), nil
 
 	case finishedStateString:
-		return newFinished(), nil
+		return NewFinished(), nil
 
 	default:
 		return nil, fmt.Errorf("unsupported state '%s'", stateString)

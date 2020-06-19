@@ -21,7 +21,7 @@ func (s StateCreated) IsAllowChangeTo(newState Stater) bool {
 	// Из состояния Created можно перейти только в состояние Active
 	switch newState.(type) {
 
-	case stateActive:
+	case StateActive:
 		return true
 
 	default:

@@ -4,23 +4,23 @@ const (
 	finishedStateString = "finished"
 )
 
-type stateFinished struct {
+type StateFinished struct {
 	state
 }
 
-func newFinished() Stater {
-	return stateFinished{
+func NewFinished() Stater {
+	return StateFinished{
 		state{
 			finishedStateString,
 		},
 	}
 }
 
-func (s stateFinished) IsAllowChangeTo(newState Stater) bool {
+func (s StateFinished) IsAllowChangeTo(newState Stater) bool {
 	// Из состояние Finished никуда нельзя перейти
 	return false
 }
 
-func (s stateFinished) MarshalJSON() ([]byte, error) {
+func (s StateFinished) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }

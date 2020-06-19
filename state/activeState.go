@@ -4,23 +4,23 @@ const (
 	activeStateString = "active"
 )
 
-type stateActive struct {
+type StateActive struct {
 	state
 }
 
-func newActive() Stater {
-	return stateActive{
+func NewActive() Stater {
+	return StateActive{
 		state{
 			activeStateString,
 		},
 	}
 }
 
-func (s stateActive) IsAllowChangeTo(newState Stater) bool {
+func (s StateActive) IsAllowChangeTo(newState Stater) bool {
 
 	// Из состояния Active можно перейти только в состояние Interrupted
 	switch newState.(type) {
-	case stateInterrupted:
+	case StateInterrupted:
 		return true
 
 	default:
@@ -29,6 +29,6 @@ func (s stateActive) IsAllowChangeTo(newState Stater) bool {
 
 }
 
-func (s stateActive) MarshalJSON() ([]byte, error) {
+func (s StateActive) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
