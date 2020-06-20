@@ -9,11 +9,15 @@ import (
 	"github.com/vadim-dmitriev/sittme/stream"
 )
 
+// InMemory инплементирует интерфейс Databaser.
+// В качестве хранилища выступает оперативная память
 type InMemory struct {
 	streams []stream.Stream
 	sync.RWMutex
 }
 
+// NewInMemory создает новый экземпляр InMemory и
+// возвращает указатель
 func NewInMemory() Databaser {
 	inMemory := InMemory{
 		streams: make([]stream.Stream, 0),
@@ -22,6 +26,7 @@ func NewInMemory() Databaser {
 	return &inMemory
 }
 
+// Insert сохраняет новый объект трансляции
 func (im *InMemory) Insert(newStream stream.Stream) error {
 	im.Lock()
 	defer im.Unlock()
@@ -31,6 +36,8 @@ func (im *InMemory) Insert(newStream stream.Stream) error {
 	return nil
 }
 
+// Select производит поиск трансляции с заданным идентификатором uuid.
+// Возвращает error в случае, если трансляция не найдена
 func (im *InMemory) Select(uuid uuid.UUID) (stream.Stream, error) {
 	im.RLock()
 	defer im.RUnlock()
@@ -44,19 +51,22 @@ func (im *InMemory) Select(uuid uuid.UUID) (stream.Stream, error) {
 
 }
 
-func (im *InMemory) SelectAll() []stream.Stream {
+// SelectAll возвращает список объектов всех существующих трансляций
+func (im *InMemory) SelectAll() ([]stream.Stream, error) {
 	im.RLock()
 	defer im.RUnlock()
 
-	return im.streams
+	return im.streams, nil
 }
 
+// Delete удаляет объект трансляции с заданным идентификатором uuid
 func (im *InMemory) Delete(uuid uuid.UUID) error {
 	im.Lock()
 	defer im.Unlock()
 
 	for i, stream := range im.streams {
 		if stream.UUID == uuid {
+			close(im.streams[i].StateChan)
 			im.streams[i] = im.streams[len(im.streams)-1]
 			im.streams = im.streams[:len(im.streams)-1]
 			break
@@ -66,6 +76,7 @@ func (im *InMemory) Delete(uuid uuid.UUID) error {
 	return nil
 }
 
+// Update изменяет состояние трансляции с идентификатором uuid на новое newState
 func (im *InMemory) Update(uuid uuid.UUID, newState state.Stater) error {
 	im.Lock()
 	defer im.Unlock()

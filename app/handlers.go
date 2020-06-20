@@ -7,18 +7,6 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type successResponse struct {
-	Data interface{} `json:"data"`
-}
-
-type failedResponse struct {
-	Error struct {
-		StatusCode  int    `json:"status"`
-		Title       string `json"title"`
-		Description string `json:"description"`
-	} `json:"error"`
-}
-
 func (srv *Service) createStreamHandler() fasthttp.RequestHandler {
 
 	return func(ctx *fasthttp.RequestCtx) {
