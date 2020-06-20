@@ -48,7 +48,7 @@ func (srv *Service) deleteStream(uuid uuid.UUID) error {
 }
 
 func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
-	stream, err := srv.db.Select(uuid)
+	selectedStream, err := srv.db.Select(uuid)
 	if err != nil {
 		return streamNotFoundError{uuid}
 	}
@@ -58,7 +58,7 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 		return err
 	}
 
-	currentState := stream.GetState()
+	currentState := selectedStream.GetState()
 
 	if newState == currentState {
 		return nil
@@ -72,11 +72,14 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 		}
 	}
 
-	newStreamChan := make(chan state.Stater)
+	go func(s stream.Stream) {
+		ch := s.StateChan
+		currentState := <-ch
+		if !currentState.IsAllowChangeTo(state.NewFinished()) {
+			return
+		}
 
-	go func(ch chan state.Stater) {
-		timer := time.NewTimer(2 * time.Second)
-
+		timer := time.NewTimer(5 * time.Second)
 		select {
 		case newState := <-ch:
 			if currentState.IsAllowChangeTo(newState) {
@@ -85,10 +88,12 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 
 		case <-timer.C:
 			srv.db.Update(uuid, state.NewFinished())
+
 		}
 
-	}(newStreamChan)
-	newStreamChan <- newState
+	}(selectedStream)
+
+	selectedStream.StateChan <- newState
 
 	return srv.db.Update(uuid, newState)
 }

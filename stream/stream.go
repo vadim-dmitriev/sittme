@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,14 +14,18 @@ type Stream struct {
 		State        state.Stater `json:"state"`
 		DateModified time.Time    `json:"date_modified"`
 	} `json:"attributes"`
+
+	StateChan chan state.Stater `json:"-"`
 }
 
 // New cоздает новый объект трансляции, у которого
 // состояние 'created'
 func New() Stream {
 	stream := Stream{
-		UUID: generateUUID(),
+		UUID:      generateUUID(),
+		StateChan: make(chan state.Stater),
 	}
+	fmt.Printf("%p\n", stream.StateChan)
 
 	stream.Attributes.DateModified = time.Now()
 	stream.Attributes.State = state.NewCreated()
