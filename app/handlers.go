@@ -42,7 +42,7 @@ func (srv *Service) deleteStreamHandler() fasthttp.RequestHandler {
 			return
 		}
 
-		serializeResponse(ctx, nil, fasthttp.StatusOK)
+		serializeResponse(ctx, nil, fasthttp.StatusNoContent)
 	}
 
 }
