@@ -7,13 +7,25 @@ import (
 	"github.com/vadim-dmitriev/sittme/state"
 )
 
+// Stream структура, описывающая сущность Трансляция
 type Stream struct {
-	UUID       uuid.UUID `json:"id"`
+	// UUID уникальный идентификатор трансляции.
+	// Представляет из себя UUIDv4
+	UUID uuid.UUID `json:"id"`
+
+	// Attributes описывает свойства трансляции
 	Attributes struct {
-		State        state.Stater `json:"state"`
-		DateModified time.Time    `json:"date_modified"`
+
+		// State содержит текущее состояние трансляции
+		State state.Stater `json:"state"`
+
+		// DateModified содержит время в формате RFC 3339
+		DateModified time.Time `json:"date_modified"`
 	} `json:"attributes"`
 
+	// StateChan необходим, чтобы связать объект трансляции
+	// с горутиной, в которой будет происходить отложеный
+	// переход между состояниями
 	StateChan chan state.Stater `json:"-"`
 }
 
@@ -31,10 +43,12 @@ func New() Stream {
 	return stream
 }
 
+// GetState возвращает текущее состояние трансляции
 func (s *Stream) GetState() state.Stater {
 	return s.Attributes.State
 }
 
+// SetState устанавливает новое состояние
 func (s *Stream) SetState(newState state.Stater) {
 	s.Attributes.State = newState
 }
