@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -25,7 +24,6 @@ func New() Stream {
 		UUID:      generateUUID(),
 		StateChan: make(chan state.Stater),
 	}
-	fmt.Printf("%p\n", stream.StateChan)
 
 	stream.Attributes.DateModified = time.Now()
 	stream.Attributes.State = state.NewCreated()

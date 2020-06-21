@@ -33,3 +33,7 @@ func (s StateInterrupted) IsAllowChangeTo(newState Stater) bool {
 func (s StateInterrupted) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
+
+func (s StateInterrupted) String() string {
+	return s.stateString
+}

@@ -24,3 +24,7 @@ func (s StateFinished) IsAllowChangeTo(newState Stater) bool {
 func (s StateFinished) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
+
+func (s StateFinished) String() string {
+	return s.stateString
+}

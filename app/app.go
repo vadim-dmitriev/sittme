@@ -26,15 +26,15 @@ func New() *Service {
 	return srv
 }
 
-func (srv *Service) createNewStream() stream.Stream {
+func (srv *Service) createNewStream() (stream.Stream, error) {
 	newStream := stream.New()
 
-	srv.db.Insert(newStream)
+	err := srv.db.Insert(newStream)
 
-	return newStream
+	return newStream, err
 }
 
-func (srv *Service) getStreams() []stream.Stream {
+func (srv *Service) getStreams() ([]stream.Stream, error) {
 	return srv.db.SelectAll()
 }
 
