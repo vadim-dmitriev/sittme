@@ -1,37 +1,57 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
+
+	"github.com/vadim-dmitriev/sittme/common"
 
 	"github.com/vadim-dmitriev/sittme/app"
 	"github.com/valyala/fasthttp"
 )
 
 func main() {
-	srv := app.New()
+	cfg, err := common.NewConfig()
+	if err != nil {
+		log.Printf("Can`t get config: %s", err.Error())
+		return
+	}
+
+	srv := app.New(cfg)
 
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, os.Interrupt)
 	signal.Notify(quitCh, syscall.SIGTERM)
 
 	server := fasthttp.Server{
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 30 * time.Second,
+		ReadTimeout:  cfg.Server.ReadTimeout,
+		WriteTimeout: cfg.Server.WriteTimeout,
 		Handler:      srv.Handler(),
 	}
 
-	log.Printf("Service started")
-	go server.ListenAndServe(":8080")
+	serverPort := cfg.Server.Port
+	log.Printf("Service started on localhost:%d", serverPort)
 
-	// Reciving signal
-	<-quitCh
-	log.Printf("Gracefully terminating service...")
-	if err := server.Shutdown(); err != nil {
-		panic(err)
+	listenAndServeErrChan := make(chan error, 1)
+
+	go func() {
+		listenAndServeErrChan <- server.ListenAndServe(fmt.Sprintf("localhost:%d", serverPort))
+	}()
+
+	select {
+	case err := <-listenAndServeErrChan:
+		log.Printf("Server error: %s", err.Error())
+
+	case <-quitCh:
+		log.Printf("Gracefully terminating server...")
+		if err := server.Shutdown(); err != nil {
+			panic(err)
+		}
 	}
-	// TODO: wait for goroutines done -> use waitGroup
+
+	log.Printf("Server stoped.")
+
 }

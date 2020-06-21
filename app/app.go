@@ -3,6 +3,8 @@ package app
 import (
 	"time"
 
+	"github.com/vadim-dmitriev/sittme/common"
+
 	"github.com/google/uuid"
 	"github.com/vadim-dmitriev/sittme/database"
 	"github.com/vadim-dmitriev/sittme/state"
@@ -15,13 +17,15 @@ import (
 type Service struct {
 	db      database.Databaser
 	handler fasthttp.RequestHandler
+	config  *common.Config
 }
 
 // New создает новый объект структуры Service
-func New() *Service {
+func New(cfg *common.Config) *Service {
 	srv := &Service{
 		db:      database.NewInMemory(),
 		handler: nil,
+		config:  cfg,
 	}
 
 	srv.createHandler()
@@ -82,7 +86,7 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 			return
 		}
 
-		timer := time.NewTimer(5 * time.Second)
+		timer := time.NewTimer(srv.config.Timeout)
 		select {
 		case newState := <-ch:
 			if currentState.IsAllowChangeTo(newState) {
