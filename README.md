@@ -15,20 +15,20 @@
 ### Требования
 
 Для запуска необходима версия [Golang](https://golang.org/) >= 1.11
-```lang=bash
+```bash
 $ go version
 go version go1.11.5 linux/amd64
 ```
 
 ### Установка
 
-```lang=bash
+```bash
 go get github.com/vadim-dmitriev/sittme
 ```
 
 ### Запуск
 
-```lang=bash
+```bash
 cd $GOPATH/src/github.com/vadim-dmitriev/sittme
 $ go build . && ./sittme
 2020/06/21 18:52:11 Service started on localhost:8080
@@ -53,7 +53,7 @@ $ go build . && ./sittme
 
 Создание трансляции. Трансляции назначется уникальный идентификатор.
 
-```lang=bash
+```bash
 $ http POST :8080/api/v1/streams
 HTTP/1.1 201 Created
 Content-Length: 155
@@ -78,7 +78,7 @@ Server: fasthttp
 
 Получение списка всех существующих трансляций.
 
-```lang=bash
+```bash
 $ http GET :8080/api/v1/streams
 HTTP/1.1 200 OK
 Content-Length: 290
@@ -111,7 +111,7 @@ Server: fasthttp
 
 Удаление трансляции с заданным уникальным идентификатором `uuid`.
 
-```lang=bash
+```bash
 $ http DELETE :8080/api/v1/streams/ad7b989e-f36e-4570-967c-49ce807386c8
 HTTP/1.1 204 No Content
 Content-Type: application/json
@@ -124,13 +124,13 @@ Server: fasthttp
 ### `PATCH /api/v1/streams/{uuid}`
 
 Изменение состояния трансляции с заданным уникальным идентификатором `uuid`. В теле запроса необходимо передать JSON следующего формата:
-```lang=json
+```json
 {
     "state": "{new_state}"
 }
 ```
 
-```lang=bash
+```bash
 $ echo '{"state": "active"}' | http PATCH :8080/api/v1/streams/d2a444de-d49d-4b73-aa4c-fba5bd34a8ea
 HTTP/1.1 204 No Content
 Content-Type: application/json
