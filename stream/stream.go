@@ -48,8 +48,10 @@ func (s *Stream) GetState() state.Stater {
 	return s.Attributes.State
 }
 
-// SetState устанавливает новое состояние
+// SetState устанавливает новое состояние и устанавливает
+// текущее время в поле DateModified
 func (s *Stream) SetState(newState state.Stater) {
+	s.Attributes.DateModified = time.Now()
 	s.Attributes.State = newState
 }
 
