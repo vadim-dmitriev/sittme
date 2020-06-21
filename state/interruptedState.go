@@ -4,24 +4,29 @@ const (
 	interruptedStateString = "interrupted"
 )
 
-type StateInterrupted struct {
+// Interrupted структура состояния 'прерван'.
+// Имплементирует интерфейс Stater
+type Interrupted struct {
 	state
 }
 
+// NewInterrupted создает новый объект структуры Interrupted
 func NewInterrupted() Stater {
-	return StateInterrupted{
+	return Interrupted{
 		state{
 			interruptedStateString,
 		},
 	}
 }
 
-func (s StateInterrupted) IsAllowChangeTo(newState Stater) bool {
+// IsAllowChangeTo проверяет возможность перехода из текущего
+// состояния в новое
+func (s Interrupted) IsAllowChangeTo(newState Stater) bool {
 
 	// Из состояния Interrupted можно перейти в состояние
 	// Finished ИЛИ вернуться в состояние Active
 	switch newState.(type) {
-	case StateActive, StateFinished:
+	case Active, Finished:
 		return true
 
 	default:
@@ -30,10 +35,12 @@ func (s StateInterrupted) IsAllowChangeTo(newState Stater) bool {
 
 }
 
-func (s StateInterrupted) MarshalJSON() ([]byte, error) {
+// MarshalJSON необходим для имплементации интерфейса JSONMarshaller
+func (s Interrupted) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
 
-func (s StateInterrupted) String() string {
+// String нужен для имплементации интерфейса Stringer
+func (s Interrupted) String() string {
 	return s.stateString
 }

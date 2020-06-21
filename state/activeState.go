@@ -4,23 +4,28 @@ const (
 	activeStateString = "active"
 )
 
-type StateActive struct {
+// Active структура состояния 'активный'.
+// Имплементирует интерфейс Stater
+type Active struct {
 	state
 }
 
+// NewActive создает новый объект структуры Active
 func NewActive() Stater {
-	return StateActive{
+	return Active{
 		state{
 			activeStateString,
 		},
 	}
 }
 
-func (s StateActive) IsAllowChangeTo(newState Stater) bool {
+// IsAllowChangeTo проверяет возможность перехода из текущего
+// состояния в новое
+func (s Active) IsAllowChangeTo(newState Stater) bool {
 
 	// Из состояния Active можно перейти только в состояние Interrupted
 	switch newState.(type) {
-	case StateInterrupted:
+	case Interrupted:
 		return true
 
 	default:
@@ -29,10 +34,12 @@ func (s StateActive) IsAllowChangeTo(newState Stater) bool {
 
 }
 
-func (s StateActive) MarshalJSON() ([]byte, error) {
+// MarshalJSON необходим для имплементации интерфейса JSONMarshaller
+func (s Active) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
 
-func (s StateActive) String() string {
+// String нужен для имплементации интерфейса Stringer
+func (s Active) String() string {
 	return s.stateString
 }

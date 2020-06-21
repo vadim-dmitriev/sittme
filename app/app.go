@@ -10,11 +10,14 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// Service структура сервиса. Является связующей между
+// web, хранилищем и бизнес логикой.
 type Service struct {
 	db      database.Databaser
 	handler fasthttp.RequestHandler
 }
 
+// New создает новый объект структуры Service
 func New() *Service {
 	srv := &Service{
 		db:      database.NewInMemory(),

@@ -16,6 +16,7 @@ func (srv *Service) createHandler() {
 	srv.handler = logMiddleware(router.Handler)
 }
 
+// Handler возвращает fasthttp.RequestHandler
 func (srv *Service) Handler() fasthttp.RequestHandler {
 	return srv.handler
 }

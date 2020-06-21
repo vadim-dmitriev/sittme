@@ -4,24 +4,29 @@ const (
 	createdStateString = "created"
 )
 
-type StateCreated struct {
+// Created структура состояния 'создан'.
+// Имплементирует интерфейс Stater
+type Created struct {
 	state
 }
 
+// NewCreated создает новый объект структуры Created
 func NewCreated() Stater {
-	return StateCreated{
+	return Created{
 		state{
 			createdStateString,
 		},
 	}
 }
 
-func (s StateCreated) IsAllowChangeTo(newState Stater) bool {
+// IsAllowChangeTo проверяет возможность перехода из текущего
+// состояния в новое
+func (s Created) IsAllowChangeTo(newState Stater) bool {
 
 	// Из состояния Created можно перейти только в состояние Active
 	switch newState.(type) {
 
-	case StateActive:
+	case Active:
 		return true
 
 	default:
@@ -30,10 +35,12 @@ func (s StateCreated) IsAllowChangeTo(newState Stater) bool {
 
 }
 
-func (s StateCreated) MarshalJSON() ([]byte, error) {
+// MarshalJSON необходим для имплементации интерфейса JSONMarshaller
+func (s Created) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
 
-func (s StateCreated) String() string {
+// String нужен для имплементации интерфейса Stringer
+func (s Created) String() string {
 	return s.stateString
 }

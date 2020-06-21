@@ -6,6 +6,7 @@ type state struct {
 	stateString string
 }
 
+// NewState возвращает объект состояния на основе его текстового представления
 func NewState(stateString string) (Stater, error) {
 
 	switch stateString {

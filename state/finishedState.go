@@ -4,27 +4,34 @@ const (
 	finishedStateString = "finished"
 )
 
-type StateFinished struct {
+// Finished структура состояния 'завершен'.
+// Имплементирует интерфейс Stater
+type Finished struct {
 	state
 }
 
+// NewFinished создает новый объект структуры Finished
 func NewFinished() Stater {
-	return StateFinished{
+	return Finished{
 		state{
 			finishedStateString,
 		},
 	}
 }
 
-func (s StateFinished) IsAllowChangeTo(newState Stater) bool {
+// IsAllowChangeTo проверяет возможность перехода из текущего
+// состояния в новое
+func (s Finished) IsAllowChangeTo(newState Stater) bool {
 	// Из состояние Finished никуда нельзя перейти
 	return false
 }
 
-func (s StateFinished) MarshalJSON() ([]byte, error) {
+// MarshalJSON необходим для имплементации интерфейса JSONMarshaller
+func (s Finished) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + s.stateString + `"`), nil
 }
 
-func (s StateFinished) String() string {
+// String нужен для имплементации интерфейса Stringer
+func (s Finished) String() string {
 	return s.stateString
 }
