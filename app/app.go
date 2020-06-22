@@ -80,21 +80,24 @@ func (srv *Service) setNewState(uuid uuid.UUID, newString string) error {
 	}
 
 	go func(s stream.Stream) {
-		ch := s.StateChan
-		currentState := <-ch
+		currentState := <-s.StateChan
+		if currentState == nil {
+			return
+		}
+
 		if !currentState.IsAllowChangeTo(state.NewFinished()) {
 			return
 		}
 
 		timer := time.NewTimer(srv.config.Timeout)
 		select {
-		case newState := <-ch:
-			if currentState.IsAllowChangeTo(newState) {
-				srv.db.Update(uuid, state.NewActive())
+		case newState := <-s.StateChan:
+			if newState != nil && currentState.IsAllowChangeTo(newState) {
+				srv.db.Update(s.UUID, newState)
 			}
 
 		case <-timer.C:
-			srv.db.Update(uuid, state.NewFinished())
+			srv.db.Update(s.UUID, state.NewFinished())
 
 		}
 
